@@ -48,6 +48,13 @@ class TranscriptManager {
             segmentElement.dataset.start = segment.start;
             segmentElement.dataset.stop = segment.stop;
 
+            // Add timestamp
+            const timestamp = document.createElement('span');
+            timestamp.className = 'transcript-timestamp';
+            const startTime = this.formatTime(segment.start / 100); // Convert centiseconds to seconds
+            timestamp.textContent = `[${startTime}] `;
+            segmentElement.appendChild(timestamp);
+
             // Split the text into words and create spans for each word
             const words = segment.text.trim().split(/\s+/);
             words.forEach((word, wordIndex) => {
@@ -73,6 +80,12 @@ class TranscriptManager {
 
             this.transcriptContainer.appendChild(segmentElement);
         });
+    }
+
+    formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
     updateActiveWord(currentTime) {

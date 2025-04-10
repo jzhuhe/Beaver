@@ -181,6 +181,13 @@ button.active {
     color: white;
 }
 
+.transcript-timestamp {
+    color: #718096;
+    font-family: monospace;
+    font-size: 0.9em;
+    user-select: none;
+}
+
 /* Audio Controls */
 .audio-controls {
     background: white;
