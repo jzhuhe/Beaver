@@ -8,12 +8,16 @@ class AudioPlayer {
         this.progressBar = document.getElementById('progressBar');
         this.currentTimeDisplay = document.getElementById('currentTime');
         this.durationDisplay = document.getElementById('duration');
+        this.speedControl = document.getElementById('playbackSpeed');
     }
 
     initialize(audio) {
         this.audio = audio;
         this.setupEventListeners();
         this.updateDuration();
+        
+        // Set initial playback rate
+        this.audio.playbackRate = parseFloat(this.speedControl.value);
     }
 
     setupEventListeners() {
@@ -25,6 +29,13 @@ class AudioPlayer {
         this.audio.addEventListener('timeupdate', () => this.updateProgress());
         this.audio.addEventListener('loadedmetadata', () => this.updateDuration());
         this.audio.addEventListener('ended', () => this.handleEnded());
+
+        // Add speed control event listener
+        this.speedControl.addEventListener('change', () => {
+            if (this.audio) {
+                this.audio.playbackRate = parseFloat(this.speedControl.value);
+            }
+        });
     }
 
     togglePlayPause() {
