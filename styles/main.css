@@ -89,6 +89,23 @@ button:disabled {
     box-shadow: none;
 }
 
+button.active {
+    background-color: #3182ce;
+    box-shadow: 0 4px 6px rgba(66, 153, 225, 0.3);
+}
+
+#toggleAutoScroll {
+    background-color: #48bb78;
+}
+
+#toggleAutoScroll:hover {
+    background-color: #38a169;
+}
+
+#toggleAutoScroll.active {
+    background-color: #3182ce;
+}
+
 /* Player Screen */
 .player-header {
     display: flex;
@@ -120,6 +137,7 @@ button:disabled {
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #cbd5e0 #f7fafc;
+    padding-bottom: 120px;
 }
 
 .transcript-container::-webkit-scrollbar {
@@ -177,6 +195,7 @@ button:disabled {
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
+    z-index: 100;
 }
 
 .progress-container {

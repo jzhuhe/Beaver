@@ -33,18 +33,20 @@
         <div class="transcript-container">
             <div id="transcriptText"></div>
         </div>
+    </div>
 
-        <div class="audio-controls">
-            <div class="progress-container">
-                <span id="currentTime">0:00</span>
-                <input type="range" id="progressBar" min="0" max="100" value="0">
-                <span id="duration">0:00</span>
-            </div>
-            <div class="control-buttons">
-                <button id="skipBackward">⏪ 30s</button>
-                <button id="playPause">▶ Play</button>
-                <button id="skipForward">30s ⏩</button>
-            </div>
+    <!-- Audio Controls (moved outside playerScreen) -->
+    <div class="audio-controls">
+        <div class="progress-container">
+            <span id="currentTime">0:00</span>
+            <input type="range" id="progressBar" min="0" max="100" value="0">
+            <span id="duration">0:00</span>
+        </div>
+        <div class="control-buttons">
+            <button id="skipBackward">⏪ 30s</button>
+            <button id="playPause">▶ Play</button>
+            <button id="skipForward">30s ⏩</button>
+            <button id="toggleAutoScroll" class="active">Auto-scroll: On</button>
         </div>
     </div>
 

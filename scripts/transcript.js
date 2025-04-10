@@ -3,6 +3,34 @@ class TranscriptManager {
         this.transcriptContainer = document.getElementById('transcriptText');
         this.transcriptData = null;
         this.wordElements = new Map(); // Map to store word elements and their timestamps
+        this.autoScrollEnabled = true;
+        this.userScrolling = false;
+        this.scrollTimeout = null;
+        
+        // Get the toggle button
+        this.toggleButton = document.getElementById('toggleAutoScroll');
+        
+        // Add event listener for the toggle button
+        this.toggleButton.addEventListener('click', () => {
+            this.autoScrollEnabled = !this.autoScrollEnabled;
+            this.toggleButton.textContent = `Auto-scroll: ${this.autoScrollEnabled ? 'On' : 'Off'}`;
+            this.toggleButton.classList.toggle('active');
+        });
+        
+        // Add scroll event listener to detect manual scrolling
+        this.transcriptContainer.addEventListener('scroll', () => {
+            this.userScrolling = true;
+            
+            // Clear any existing timeout
+            if (this.scrollTimeout) {
+                clearTimeout(this.scrollTimeout);
+            }
+            
+            // Set a timeout to resume automatic scrolling after 2 seconds of no manual scrolling
+            this.scrollTimeout = setTimeout(() => {
+                this.userScrolling = false;
+            }, 2000);
+        });
     }
 
     initialize(transcriptData) {
@@ -64,11 +92,23 @@ class TranscriptManager {
             if (currentTimeCentiseconds >= start && currentTimeCentiseconds <= stop) {
                 element.classList.add('active');
                 
-                // Scroll the word into view if needed
-                element.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
+                // Only scroll if auto-scroll is enabled
+                if (this.autoScrollEnabled) {
+                    const rect = element.getBoundingClientRect();
+                    const isVisible = (
+                        rect.top >= 0 &&
+                        rect.left >= 0 &&
+                        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+                    );
+                    
+                    if (!isVisible) {
+                        element.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }
+                }
             }
         });
     }
