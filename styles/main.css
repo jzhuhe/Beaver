@@ -8,8 +8,8 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f5f5f5;
+    color: #2d3748;
+    background-color: #f7fafc;
 }
 
 .screen {
@@ -17,6 +17,12 @@ body {
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .screen.active {
@@ -26,9 +32,9 @@ body {
 /* File Selection Screen */
 .file-selection-container {
     background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.1);
     max-width: 600px;
     margin: 2rem auto;
 }
@@ -39,35 +45,48 @@ body {
 
 .file-input-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #4a5568;
 }
 
 .file-input-group input[type="file"] {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
+}
+
+.file-input-group input[type="file"]:hover {
+    border-color: #cbd5e0;
 }
 
 button {
-    background-color: #007bff;
+    background-color: #4299e1;
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 1rem;
-    transition: background-color 0.2s;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(66, 153, 225, 0.2);
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #3182ce;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(66, 153, 225, 0.3);
 }
 
 button:disabled {
-    background-color: #ccc;
+    background-color: #cbd5e0;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* Player Screen */
@@ -75,85 +94,122 @@ button:disabled {
     display: flex;
     align-items: center;
     margin-bottom: 2rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .player-header button {
     margin-right: 1rem;
+    background-color: #4a5568;
+}
+
+.player-header button:hover {
+    background-color: #2d3748;
 }
 
 .transcript-container {
     background: white;
     padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.1);
     margin-bottom: 2rem;
     min-height: 400px;
     max-height: 60vh;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.transcript-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.transcript-container::-webkit-scrollbar-track {
+    background: #f7fafc;
+}
+
+.transcript-container::-webkit-scrollbar-thumb {
+    background-color: #cbd5e0;
+    border-radius: 4px;
 }
 
 .transcript-segment {
     margin-bottom: 1rem;
-    padding: 0.5rem;
-    border-radius: 4px;
-    transition: background-color 0.2s;
+    padding: 0.75rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
 .transcript-segment.active {
-    background-color: #e3f2fd;
+    background-color: #ebf8ff;
 }
 
 .transcript-word {
     display: inline;
     padding: 0 2px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
+    border-radius: 4px;
 }
 
 .transcript-word:hover {
-    background-color: #e3f2fd;
+    background-color: #ebf8ff;
 }
 
 .transcript-word.active {
-    background-color: #2196f3;
+    background-color: #4299e1;
     color: white;
 }
 
 /* Audio Controls */
 .audio-controls {
     background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.1);
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
+    margin: 1rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .progress-container {
     display: flex;
     align-items: center;
     margin-bottom: 1rem;
+    gap: 1rem;
 }
 
 #progressBar {
     flex: 1;
-    margin: 0 1rem;
     height: 6px;
     -webkit-appearance: none;
-    background: #ddd;
+    background: #e2e8f0;
     border-radius: 3px;
     outline: none;
+    transition: all 0.2s ease;
 }
 
 #progressBar::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 16px;
     height: 16px;
-    background: #007bff;
+    background: #4299e1;
     border-radius: 50%;
     cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(66, 153, 225, 0.2);
+}
+
+#progressBar::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 6px rgba(66, 153, 225, 0.3);
 }
 
 .control-buttons {
@@ -170,13 +226,20 @@ button:disabled {
 
     .file-selection-container {
         margin: 1rem;
+        padding: 1.5rem;
     }
 
     .transcript-container {
         min-height: 300px;
+        margin: 1rem;
     }
 
     .control-buttons {
         flex-wrap: wrap;
+    }
+
+    .audio-controls {
+        margin: 0.5rem;
+        padding: 1rem;
     }
 } 
