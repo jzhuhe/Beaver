@@ -26,27 +26,27 @@
     <!-- Transcript Player Screen -->
     <div id="playerScreen" class="screen">
         <div class="player-header">
-            <button id="backButton">← Back to File Selection</button>
-            <h2 id="currentFileName">Current File</h2>
+            <div class="header-left">
+                <button id="backButton">← Back</button>
+                <h2 id="currentFileName">Current File</h2>
+            </div>
+            <div class="audio-controls">
+                <div class="control-buttons">
+                    <button id="skipBackward">⏪</button>
+                    <button id="playPause">▶</button>
+                    <button id="skipForward">⏩</button>
+                    <button id="toggleAutoScroll" class="active">Auto-scroll: On</button>
+                </div>
+                <div class="progress-container">
+                    <span id="currentTime">00:00:00</span>
+                    <input type="range" id="progressBar" min="0" max="100" value="0">
+                    <span id="duration">00:00:00</span>
+                </div>
+            </div>
         </div>
         
         <div class="transcript-container">
             <div id="transcriptText"></div>
-        </div>
-    </div>
-
-    <!-- Audio Controls (moved outside playerScreen) -->
-    <div class="audio-controls">
-        <div class="progress-container">
-            <span id="currentTime">0:00</span>
-            <input type="range" id="progressBar" min="0" max="100" value="0">
-            <span id="duration">0:00</span>
-        </div>
-        <div class="control-buttons">
-            <button id="skipBackward">⏪ 30s</button>
-            <button id="playPause">▶ Play</button>
-            <button id="skipForward">30s ⏩</button>
-            <button id="toggleAutoScroll" class="active">Auto-scroll: On</button>
         </div>
     </div>
 
