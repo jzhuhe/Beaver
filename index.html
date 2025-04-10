@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Transcript Synchronizer</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <!-- File Selection Screen -->
+    <div id="fileSelectionScreen" class="screen active">
+        <h1>Audio Transcript Synchronizer</h1>
+        <div class="file-selection-container">
+            <div class="file-input-group">
+                <label for="audioFile">Select Audio File (MP3):</label>
+                <input type="file" id="audioFile" accept=".mp3">
+            </div>
+            <div class="file-input-group">
+                <label for="transcriptFile">Select Transcript File (JSON):</label>
+                <input type="file" id="transcriptFile" accept=".json">
+            </div>
+            <button id="loadFiles" disabled>Load Files</button>
+        </div>
+    </div>
+
+    <!-- Transcript Player Screen -->
+    <div id="playerScreen" class="screen">
+        <div class="player-header">
+            <button id="backButton">← Back to File Selection</button>
+            <h2 id="currentFileName">Current File</h2>
+        </div>
+        
+        <div class="transcript-container">
+            <div id="transcriptText"></div>
+        </div>
+
+        <div class="audio-controls">
+            <div class="progress-container">
+                <span id="currentTime">0:00</span>
+                <input type="range" id="progressBar" min="0" max="100" value="0">
+                <span id="duration">0:00</span>
+            </div>
+            <div class="control-buttons">
+                <button id="skipBackward">⏪ 30s</button>
+                <button id="playPause">▶ Play</button>
+                <button id="skipForward">30s ⏩</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/fileSelector.js"></script>
+    <script src="scripts/audioPlayer.js"></script>
+    <script src="scripts/transcript.js"></script>
+    <script src="scripts/sync.js"></script>
+</body>
+</html> 
