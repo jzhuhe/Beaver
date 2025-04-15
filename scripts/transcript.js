@@ -1,46 +1,62 @@
 class TranscriptManager {
     constructor() {
         this.transcriptContainer = document.getElementById('transcriptText');
+        this.videoTranscriptContainer = document.getElementById('videoTranscriptText');
         this.transcriptData = null;
         this.wordElements = new Map(); // Map to store word elements and their timestamps
         this.autoScrollEnabled = true;
         this.userScrolling = false;
         this.scrollTimeout = null;
         this.lastActiveSegment = null;
+        this.currentContainer = null;
         
-        // Get the toggle button
+        // Get the toggle buttons
         this.toggleButton = document.getElementById('toggleAutoScroll');
+        this.videoToggleButton = document.getElementById('videoToggleAutoScroll');
         
-        // Add event listener for the toggle button
+        // Add event listener for the toggle buttons
         this.toggleButton.addEventListener('click', () => {
             this.autoScrollEnabled = !this.autoScrollEnabled;
             this.toggleButton.textContent = `Auto-scroll: ${this.autoScrollEnabled ? 'On' : 'Off'}`;
             this.toggleButton.classList.toggle('active');
         });
         
-        // Add scroll event listener to detect manual scrolling
-        this.transcriptContainer.addEventListener('scroll', () => {
-            this.userScrolling = true;
-            
-            // Clear any existing timeout
-            if (this.scrollTimeout) {
-                clearTimeout(this.scrollTimeout);
-            }
-            
-            // Set a timeout to resume automatic scrolling after 2 seconds of no manual scrolling
-            this.scrollTimeout = setTimeout(() => {
-                this.userScrolling = false;
-            }, 2000);
+        this.videoToggleButton.addEventListener('click', () => {
+            this.autoScrollEnabled = !this.autoScrollEnabled;
+            this.videoToggleButton.textContent = `Auto-scroll: ${this.autoScrollEnabled ? 'On' : 'Off'}`;
+            this.videoToggleButton.classList.toggle('active');
         });
+        
+        // Add scroll event listeners to detect manual scrolling
+        this.transcriptContainer.addEventListener('scroll', () => this.handleScroll(this.transcriptContainer));
+        this.videoTranscriptContainer.addEventListener('scroll', () => this.handleScroll(this.videoTranscriptContainer));
     }
 
-    initialize(transcriptData) {
+    handleScroll(container) {
+        this.userScrolling = true;
+        this.currentContainer = container;
+        
+        // Clear any existing timeout
+        if (this.scrollTimeout) {
+            clearTimeout(this.scrollTimeout);
+        }
+        
+        // Set a timeout to resume automatic scrolling after 2 seconds of no manual scrolling
+        this.scrollTimeout = setTimeout(() => {
+            this.userScrolling = false;
+        }, 2000);
+    }
+
+    initialize(transcriptData, containerId = 'transcriptText') {
         this.transcriptData = transcriptData;
+        this.currentContainer = document.getElementById(containerId);
         this.renderTranscript();
     }
 
     renderTranscript() {
-        this.transcriptContainer.innerHTML = '';
+        if (!this.currentContainer) return;
+        
+        this.currentContainer.innerHTML = '';
         this.wordElements.clear();
         this.lastActiveSegment = null;
 
@@ -87,14 +103,19 @@ class TranscriptManager {
                 // Add click event listener for seeking
                 wordElement.addEventListener('click', () => {
                     const startTime = wordStart / 100; // Convert centiseconds to seconds
-                    window.audioPlayer.setCurrentTime(startTime);
-                    window.audioPlayer.play();
+                    if (window.audioPlayer && window.audioPlayer.audio) {
+                        window.audioPlayer.setCurrentTime(startTime);
+                        window.audioPlayer.play();
+                    } else if (window.videoPlayer && window.videoPlayer.video) {
+                        window.videoPlayer.video.currentTime = startTime;
+                        window.videoPlayer.video.play();
+                    }
                 });
 
                 segmentElement.appendChild(wordElement);
             });
 
-            this.transcriptContainer.appendChild(segmentElement);
+            this.currentContainer.appendChild(segmentElement);
         });
     }
 
@@ -168,10 +189,16 @@ class TranscriptManager {
     }
 
     cleanup() {
-        this.transcriptContainer.innerHTML = '';
+        if (this.transcriptContainer) {
+            this.transcriptContainer.innerHTML = '';
+        }
+        if (this.videoTranscriptContainer) {
+            this.videoTranscriptContainer.innerHTML = '';
+        }
         this.wordElements.clear();
         this.transcriptData = null;
         this.lastActiveSegment = null;
+        this.currentContainer = null;
     }
 }
 

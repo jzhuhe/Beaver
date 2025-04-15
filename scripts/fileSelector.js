@@ -70,7 +70,6 @@ class FileSelector {
                 
                 // Initialize the video player with the loaded data
                 window.videoPlayer.initialize(video);
-                window.transcriptManager.initialize(transcriptData, 'videoTranscriptText');
                 window.syncManager.initialize(video, transcriptData, 'video');
             } else {
                 // Create audio element and set source
@@ -81,7 +80,6 @@ class FileSelector {
                 
                 // Initialize the audio player with the loaded data
                 window.audioPlayer.initialize(audio);
-                window.transcriptManager.initialize(transcriptData, 'transcriptText');
                 window.syncManager.initialize(audio, transcriptData, 'audio');
             }
 
@@ -120,7 +118,6 @@ class FileSelector {
         // Cleanup players
         window.audioPlayer.cleanup();
         window.videoPlayer.cleanup();
-        window.transcriptManager.cleanup();
         window.syncManager.cleanup();
     }
 }
