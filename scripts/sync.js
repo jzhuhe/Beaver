@@ -1,33 +1,83 @@
 class SyncManager {
     constructor() {
-        this.audio = null;
+        this.media = null;
         this.transcriptData = null;
-        this.updateInterval = null;
+        this.mediaType = null;
+        this.currentSegmentIndex = -1;
+        this.autoScrollEnabled = true;
     }
 
-    initialize(audio, transcriptData) {
-        this.audio = audio;
+    initialize(mediaElement, transcriptData, mediaType = 'audio') {
+        this.media = mediaElement;
         this.transcriptData = transcriptData;
-        this.startSync();
+        this.mediaType = mediaType;
+        this.setupEventListeners();
     }
 
-    startSync() {
-        // Update the active word every 100ms
-        this.updateInterval = setInterval(() => {
-            if (this.audio && window.audioPlayer.isPlaying) {
-                const currentTime = this.audio.currentTime;
-                window.transcriptManager.updateActiveWord(currentTime);
+    setupEventListeners() {
+        this.media.addEventListener('timeupdate', () => this.updateHighlighting());
+        this.media.addEventListener('seeked', () => this.updateHighlighting());
+    }
+
+    updateHighlighting() {
+        if (!this.media || !this.transcriptData) return;
+
+        const currentTime = this.media.currentTime * 100; // Convert to centiseconds
+        const transcriptContainer = document.getElementById(this.mediaType === 'video' ? 'videoTranscriptText' : 'transcriptText');
+        
+        // Find the current segment
+        let newSegmentIndex = this.findCurrentSegment(currentTime);
+        
+        if (newSegmentIndex !== this.currentSegmentIndex) {
+            // Remove highlight from previous segment
+            if (this.currentSegmentIndex >= 0) {
+                const prevSegment = transcriptContainer.children[this.currentSegmentIndex];
+                if (prevSegment) {
+                    prevSegment.classList.remove('active');
+                }
             }
-        }, 100);
+            
+            // Add highlight to new segment
+            if (newSegmentIndex >= 0) {
+                const newSegment = transcriptContainer.children[newSegmentIndex];
+                if (newSegment) {
+                    newSegment.classList.add('active');
+                    
+                    // Auto-scroll if enabled
+                    if (this.autoScrollEnabled) {
+                        newSegment.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }
+            
+            this.currentSegmentIndex = newSegmentIndex;
+        }
+    }
+
+    findCurrentSegment(currentTime) {
+        for (let i = 0; i < this.transcriptData.length; i++) {
+            const segment = this.transcriptData[i];
+            if (currentTime >= segment.start && currentTime <= segment.stop) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    seekToTime(timeInSeconds) {
+        if (this.media) {
+            this.media.currentTime = timeInSeconds;
+        }
     }
 
     cleanup() {
-        if (this.updateInterval) {
-            clearInterval(this.updateInterval);
-            this.updateInterval = null;
+        if (this.media) {
+            this.media.removeEventListener('timeupdate', () => this.updateHighlighting());
+            this.media.removeEventListener('seeked', () => this.updateHighlighting());
         }
-        this.audio = null;
+        this.media = null;
         this.transcriptData = null;
+        this.currentSegmentIndex = -1;
     }
 }
 

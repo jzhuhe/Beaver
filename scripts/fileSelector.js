@@ -1,12 +1,13 @@
 class FileSelector {
     constructor() {
-        this.audioFile = null;
+        this.mediaFile = null;
         this.transcriptFile = null;
-        this.audioFileInput = document.getElementById('audioFile');
+        this.mediaFileInput = document.getElementById('audioFile');
         this.transcriptFileInput = document.getElementById('transcriptFile');
         this.loadButton = document.getElementById('loadFiles');
         this.fileSelectionScreen = document.getElementById('fileSelectionScreen');
         this.playerScreen = document.getElementById('playerScreen');
+        this.videoPlayerScreen = document.getElementById('videoPlayerScreen');
         this.backButton = document.getElementById('backButton');
         this.currentFileName = document.getElementById('currentFileName');
 
@@ -14,21 +15,21 @@ class FileSelector {
     }
 
     initializeEventListeners() {
-        this.audioFileInput.addEventListener('change', (e) => this.handleAudioFileSelect(e));
+        this.mediaFileInput.addEventListener('change', (e) => this.handleMediaFileSelect(e));
         this.transcriptFileInput.addEventListener('change', (e) => this.handleTranscriptFileSelect(e));
         this.loadButton.addEventListener('click', () => this.loadFiles());
         this.backButton.addEventListener('click', () => this.goBack());
     }
 
-    handleAudioFileSelect(event) {
+    handleMediaFileSelect(event) {
         const file = event.target.files[0];
-        if (file && file.type === 'audio/mpeg') {
-            this.audioFile = file;
+        if (file && (file.type === 'audio/mpeg' || file.type === 'video/mp4')) {
+            this.mediaFile = file;
             this.updateLoadButton();
         } else {
-            alert('Please select a valid MP3 file');
-            this.audioFileInput.value = '';
-            this.audioFile = null;
+            alert('Please select a valid MP3 or MP4 file');
+            this.mediaFileInput.value = '';
+            this.mediaFile = null;
             this.updateLoadButton();
         }
     }
@@ -47,7 +48,7 @@ class FileSelector {
     }
 
     updateLoadButton() {
-        this.loadButton.disabled = !(this.audioFile && this.transcriptFile);
+        this.loadButton.disabled = !(this.mediaFile && this.transcriptFile);
     }
 
     async loadFiles() {
@@ -56,19 +57,36 @@ class FileSelector {
             const transcriptText = await this.transcriptFile.text();
             const transcriptData = JSON.parse(transcriptText);
 
-            // Create audio element and set source
-            const audio = new Audio(URL.createObjectURL(this.audioFile));
+            // Determine if it's an audio or video file
+            const isVideo = this.mediaFile.type === 'video/mp4';
             
-            // Switch to player screen
-            this.showPlayerScreen();
-            
-            // Initialize the player with the loaded data
-            window.audioPlayer.initialize(audio);
-            window.transcriptManager.initialize(transcriptData);
-            window.syncManager.initialize(audio, transcriptData);
+            if (isVideo) {
+                // Create video element and set source
+                const video = document.getElementById('videoPlayer');
+                video.src = URL.createObjectURL(this.mediaFile);
+                
+                // Switch to video player screen
+                this.showVideoPlayerScreen();
+                
+                // Initialize the video player with the loaded data
+                window.videoPlayer.initialize(video);
+                window.transcriptManager.initialize(transcriptData, 'videoTranscriptText');
+                window.syncManager.initialize(video, transcriptData, 'video');
+            } else {
+                // Create audio element and set source
+                const audio = new Audio(URL.createObjectURL(this.mediaFile));
+                
+                // Switch to audio player screen
+                this.showPlayerScreen();
+                
+                // Initialize the audio player with the loaded data
+                window.audioPlayer.initialize(audio);
+                window.transcriptManager.initialize(transcriptData, 'transcriptText');
+                window.syncManager.initialize(audio, transcriptData, 'audio');
+            }
 
             // Update the current file name
-            this.currentFileName.textContent = this.audioFile.name;
+            this.currentFileName.textContent = this.mediaFile.name;
         } catch (error) {
             console.error('Error loading files:', error);
             alert('Error loading files. Please make sure both files are valid.');
@@ -77,22 +95,31 @@ class FileSelector {
 
     showPlayerScreen() {
         this.fileSelectionScreen.classList.remove('active');
+        this.videoPlayerScreen.classList.remove('active');
         this.playerScreen.classList.add('active');
     }
 
-    goBack() {
+    showVideoPlayerScreen() {
+        this.fileSelectionScreen.classList.remove('active');
         this.playerScreen.classList.remove('active');
+        this.videoPlayerScreen.classList.add('active');
+    }
+
+    goBack() {
         this.fileSelectionScreen.classList.add('active');
+        this.playerScreen.classList.remove('active');
+        this.videoPlayerScreen.classList.remove('active');
         
         // Reset file inputs
-        this.audioFileInput.value = '';
+        this.mediaFileInput.value = '';
         this.transcriptFileInput.value = '';
-        this.audioFile = null;
+        this.mediaFile = null;
         this.transcriptFile = null;
         this.updateLoadButton();
 
-        // Clean up resources
+        // Cleanup players
         window.audioPlayer.cleanup();
+        window.videoPlayer.cleanup();
         window.transcriptManager.cleanup();
         window.syncManager.cleanup();
     }
