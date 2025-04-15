@@ -121,7 +121,5 @@ class AudioPlayer {
     }
 }
 
-// Initialize the audio player when the page loads
-window.addEventListener('DOMContentLoaded', () => {
-    window.audioPlayer = new AudioPlayer();
-}); 
+// Export the AudioPlayer class
+export default AudioPlayer; 

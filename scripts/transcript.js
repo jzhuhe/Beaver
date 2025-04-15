@@ -202,7 +202,5 @@ class TranscriptManager {
     }
 }
 
-// Initialize the transcript manager when the page loads
-window.addEventListener('DOMContentLoaded', () => {
-    window.transcriptManager = new TranscriptManager();
-}); 
+// Export the TranscriptManager class
+export default TranscriptManager; 

@@ -1,5 +1,21 @@
+// Import the SyncManager
+import SyncManager from './sync.js';
+
 class FileSelector {
     constructor() {
+        console.log('FileSelector constructor called');
+        
+        // Wait for the DOM to be fully loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.initialize());
+        } else {
+            this.initialize();
+        }
+    }
+    
+    initialize() {
+        console.log('FileSelector initialize called');
+        
         this.mediaFile = null;
         this.transcriptFile = null;
         this.mediaFileInput = document.getElementById('audioFile');
@@ -11,22 +27,50 @@ class FileSelector {
         this.backButton = document.getElementById('backButton');
         this.currentFileName = document.getElementById('currentFileName');
 
+        console.log('FileSelector constructor - Elements found:');
+        console.log('Media file input:', this.mediaFileInput);
+        console.log('Transcript file input:', this.transcriptFileInput);
+        console.log('Load button:', this.loadButton);
+
         this.initializeEventListeners();
     }
 
     initializeEventListeners() {
-        this.mediaFileInput.addEventListener('change', (e) => this.handleMediaFileSelect(e));
-        this.transcriptFileInput.addEventListener('change', (e) => this.handleTranscriptFileSelect(e));
-        this.loadButton.addEventListener('click', () => this.loadFiles());
-        this.backButton.addEventListener('click', () => this.goBack());
+        console.log('Initializing event listeners');
+        this.mediaFileInput.addEventListener('change', (e) => {
+            console.log('Media file input change event fired');
+            this.handleMediaFileSelect(e);
+        });
+        this.transcriptFileInput.addEventListener('change', (e) => {
+            console.log('Transcript file input change event fired');
+            this.handleTranscriptFileSelect(e);
+        });
+        this.loadButton.addEventListener('click', () => {
+            console.log('Load button clicked');
+            this.loadFiles();
+        });
+        this.backButton.addEventListener('click', () => {
+            console.log('Back button clicked');
+            this.goBack();
+        });
+        console.log('Event listeners initialized');
     }
 
     handleMediaFileSelect(event) {
         const file = event.target.files[0];
-        if (file && (file.type === 'audio/mpeg' || file.type === 'video/mp4')) {
+        console.log('Media file selected:', file);
+        
+        // Check file extension instead of MIME type
+        const fileName = file ? file.name.toLowerCase() : '';
+        const isMP3 = fileName.endsWith('.mp3');
+        const isMP4 = fileName.endsWith('.mp4');
+        
+        if (file && (isMP3 || isMP4)) {
             this.mediaFile = file;
+            console.log('Valid media file:', file.name, file.type);
             this.updateLoadButton();
         } else {
+            console.log('Invalid media file type:', file ? file.type : 'no file');
             alert('Please select a valid MP3 or MP4 file');
             this.mediaFileInput.value = '';
             this.mediaFile = null;
@@ -36,10 +80,18 @@ class FileSelector {
 
     handleTranscriptFileSelect(event) {
         const file = event.target.files[0];
-        if (file && file.type === 'application/json') {
+        console.log('Transcript file selected:', file);
+        
+        // Check file extension instead of MIME type
+        const fileName = file ? file.name.toLowerCase() : '';
+        const isJSON = fileName.endsWith('.json');
+        
+        if (file && isJSON) {
             this.transcriptFile = file;
+            console.log('Valid transcript file:', file.name, file.type);
             this.updateLoadButton();
         } else {
+            console.log('Invalid transcript file type:', file ? file.type : 'no file');
             alert('Please select a valid JSON file');
             this.transcriptFileInput.value = '';
             this.transcriptFile = null;
@@ -48,7 +100,9 @@ class FileSelector {
     }
 
     updateLoadButton() {
+        console.log('Updating load button. Media file:', this.mediaFile, 'Transcript file:', this.transcriptFile);
         this.loadButton.disabled = !(this.mediaFile && this.transcriptFile);
+        console.log('Load button disabled:', this.loadButton.disabled);
     }
 
     async loadFiles() {
@@ -70,7 +124,11 @@ class FileSelector {
                 
                 // Initialize the video player with the loaded data
                 window.videoPlayer.initialize(video);
-                window.syncManager.initialize(video, transcriptData, 'video');
+                
+                // Initialize the sync manager with the video element and transcript container
+                const transcriptContainer = document.getElementById('videoTranscriptText');
+                window.syncManager = new SyncManager(video, transcriptContainer);
+                window.syncManager.initialize(transcriptData);
             } else {
                 // Create audio element and set source
                 const audio = new Audio(URL.createObjectURL(this.mediaFile));
@@ -80,7 +138,11 @@ class FileSelector {
                 
                 // Initialize the audio player with the loaded data
                 window.audioPlayer.initialize(audio);
-                window.syncManager.initialize(audio, transcriptData, 'audio');
+                
+                // Initialize the sync manager with the audio element and transcript container
+                const transcriptContainer = document.getElementById('transcriptText');
+                window.syncManager = new SyncManager(audio, transcriptContainer);
+                window.syncManager.initialize(transcriptData);
             }
 
             // Update the current file name
@@ -122,7 +184,5 @@ class FileSelector {
     }
 }
 
-// Initialize the file selector when the page loads
-window.addEventListener('DOMContentLoaded', () => {
-    window.fileSelector = new FileSelector();
-}); 
+// Export the FileSelector class
+export default FileSelector; 

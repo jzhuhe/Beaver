@@ -121,4 +121,7 @@ class VideoPlayer {
 // Initialize the video player when the page loads
 window.addEventListener('DOMContentLoaded', () => {
     window.videoPlayer = new VideoPlayer();
-}); 
+});
+
+// Export the VideoPlayer class
+export default VideoPlayer; 
