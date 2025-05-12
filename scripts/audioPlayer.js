@@ -49,13 +49,13 @@ class AudioPlayer {
     play() {
         this.audio.play();
         this.isPlaying = true;
-        this.playPauseButton.textContent = '⏸';
+        this.playPauseButton.textContent = '⏸ Pause';
     }
 
     pause() {
         this.audio.pause();
         this.isPlaying = false;
-        this.playPauseButton.textContent = '▶';
+        this.playPauseButton.textContent = '▶ Play';
     }
 
     skipForward() {
@@ -83,7 +83,7 @@ class AudioPlayer {
 
     handleEnded() {
         this.isPlaying = false;
-        this.playPauseButton.textContent = '▶';
+        this.playPauseButton.textContent = '▶ Play';
     }
 
     formatTime(seconds) {
@@ -110,7 +110,7 @@ class AudioPlayer {
             this.audio = null;
         }
         this.isPlaying = false;
-        this.playPauseButton.textContent = '▶';
+        this.playPauseButton.textContent = '▶ Play';
         this.progressBar.value = 0;
         this.currentTimeDisplay.textContent = '0:00';
         this.durationDisplay.textContent = '0:00';
