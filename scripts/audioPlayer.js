@@ -18,41 +18,17 @@ class AudioPlayer {
         
         // Set initial playback rate
         this.audio.playbackRate = parseFloat(this.speedControl.value);
-        this.playPauseButton.textContent = '▶';
     }
 
     setupEventListeners() {
-        this.playPauseButton.addEventListener('click', () => {
-            if (!this.audio) return;
-            
-            if (this.isPlaying) {
-                this.audio.pause();
-            } else {
-                this.audio.play();
-            }
-        });
-
+        this.playPauseButton.addEventListener('click', () => this.togglePlayPause());
         this.skipForwardButton.addEventListener('click', () => this.skipForward());
         this.skipBackwardButton.addEventListener('click', () => this.skipBackward());
         this.progressBar.addEventListener('input', () => this.seek());
         
         this.audio.addEventListener('timeupdate', () => this.updateProgress());
         this.audio.addEventListener('loadedmetadata', () => this.updateDuration());
-        this.audio.addEventListener('ended', () => {
-            this.isPlaying = false;
-            this.playPauseButton.textContent = '▶';
-        });
-
-        // Handle actual play/pause state changes
-        this.audio.addEventListener('play', () => {
-            this.isPlaying = true;
-            this.playPauseButton.textContent = '⏸';
-        });
-
-        this.audio.addEventListener('pause', () => {
-            this.isPlaying = false;
-            this.playPauseButton.textContent = '▶';
-        });
+        this.audio.addEventListener('ended', () => this.handleEnded());
 
         // Add speed control event listener
         this.speedControl.addEventListener('change', () => {
@@ -62,32 +38,52 @@ class AudioPlayer {
         });
     }
 
+    togglePlayPause() {
+        if (this.isPlaying) {
+            this.pause();
+        } else {
+            this.play();
+        }
+    }
+
+    play() {
+        this.audio.play();
+        this.isPlaying = true;
+        this.playPauseButton.textContent = '⏸';
+    }
+
+    pause() {
+        this.audio.pause();
+        this.isPlaying = false;
+        this.playPauseButton.textContent = '▶';
+    }
+
     skipForward() {
-        if (!this.audio) return;
         this.audio.currentTime = Math.min(this.audio.duration, this.audio.currentTime + 30);
     }
 
     skipBackward() {
-        if (!this.audio) return;
         this.audio.currentTime = Math.max(0, this.audio.currentTime - 30);
     }
 
     seek() {
-        if (!this.audio) return;
         const time = (this.progressBar.value / 100) * this.audio.duration;
         this.audio.currentTime = time;
     }
 
     updateProgress() {
-        if (!this.audio) return;
         const progress = (this.audio.currentTime / this.audio.duration) * 100;
         this.progressBar.value = progress;
         this.currentTimeDisplay.textContent = this.formatTime(this.audio.currentTime);
     }
 
     updateDuration() {
-        if (!this.audio) return;
         this.durationDisplay.textContent = this.formatTime(this.audio.duration);
+    }
+
+    handleEnded() {
+        this.isPlaying = false;
+        this.playPauseButton.textContent = '▶';
     }
 
     formatTime(seconds) {
@@ -116,8 +112,8 @@ class AudioPlayer {
         this.isPlaying = false;
         this.playPauseButton.textContent = '▶';
         this.progressBar.value = 0;
-        this.currentTimeDisplay.textContent = '00:00:00';
-        this.durationDisplay.textContent = '00:00:00';
+        this.currentTimeDisplay.textContent = '0:00';
+        this.durationDisplay.textContent = '0:00';
     }
 }
 

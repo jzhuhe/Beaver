@@ -255,10 +255,9 @@ button.active {
 
 .transcript-segment {
     margin-bottom: 1rem;
-    padding: 0.5rem;
+    padding: 0.75rem;
     border-radius: 8px;
     transition: all 0.2s ease;
-    line-height: 1.8;
 }
 
 .transcript-segment.active {
@@ -266,14 +265,11 @@ button.active {
 }
 
 .transcript-word {
-    display: inline-block;
-    padding: 0.1rem 0.2rem;
-    margin: 0 0.1rem;
+    display: inline;
+    padding: 0 2px;
     cursor: pointer;
     transition: all 0.2s ease;
-    border-radius: 3px;
-    line-height: 1.5;
-    position: relative;
+    border-radius: 4px;
 }
 
 .transcript-word:hover {

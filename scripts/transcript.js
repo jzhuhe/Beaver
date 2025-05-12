@@ -7,8 +7,11 @@ class TranscriptManager {
         this.autoScrollEnabled = true;
         this.userScrolling = false;
         this.scrollTimeout = null;
+<<<<<<< HEAD
         this.lastActiveSegment = null;
         this.currentContainer = null;
+=======
+>>>>>>> parent of aee0385 (Changes?)
         
         // Get the toggle buttons
         this.toggleButton = document.getElementById('toggleAutoScroll');
@@ -58,50 +61,36 @@ class TranscriptManager {
         
         this.currentContainer.innerHTML = '';
         this.wordElements.clear();
-        this.lastActiveSegment = null;
 
         this.transcriptData.forEach((segment, segmentIndex) => {
             const segmentElement = document.createElement('div');
             segmentElement.className = 'transcript-segment';
             segmentElement.dataset.start = segment.start;
             segmentElement.dataset.stop = segment.stop;
-            segmentElement.dataset.index = segmentIndex;
 
             // Add timestamp
             const timestamp = document.createElement('span');
             timestamp.className = 'transcript-timestamp';
-            const startTime = this.formatTime(segment.start / 100);
+            const startTime = this.formatTime(segment.start / 100); // Convert centiseconds to seconds
             timestamp.textContent = `[${startTime}] `;
             segmentElement.appendChild(timestamp);
 
             // Split the text into words and create spans for each word
             const words = segment.text.trim().split(/\s+/);
-            const wordTimeInterval = (segment.stop - segment.start) / words.length;
-
             words.forEach((word, wordIndex) => {
                 const wordElement = document.createElement('span');
                 wordElement.className = 'transcript-word';
-                wordElement.textContent = word;
-                
-                // Calculate individual word timings
-                const wordStart = segment.start + (wordIndex * wordTimeInterval);
-                const wordStop = wordStart + wordTimeInterval;
-                
-                wordElement.dataset.start = Math.floor(wordStart);
-                wordElement.dataset.stop = Math.floor(wordStop);
-                wordElement.dataset.segmentIndex = segmentIndex;
+                wordElement.textContent = word + ' ';
+                wordElement.dataset.start = segment.start;
+                wordElement.dataset.stop = segment.stop;
                 
                 // Store the word element for later reference
                 const key = `${segmentIndex}-${wordIndex}`;
-                this.wordElements.set(key, {
-                    element: wordElement,
-                    start: wordStart,
-                    stop: wordStop,
-                    segmentIndex: segmentIndex
-                });
+                this.wordElements.set(key, wordElement);
 
                 // Add click event listener for seeking
                 wordElement.addEventListener('click', () => {
+<<<<<<< HEAD
                     const startTime = wordStart / 100; // Convert centiseconds to seconds
                     if (window.audioPlayer && window.audioPlayer.audio) {
                         window.audioPlayer.setCurrentTime(startTime);
@@ -110,6 +99,11 @@ class TranscriptManager {
                         window.videoPlayer.video.currentTime = startTime;
                         window.videoPlayer.video.play();
                     }
+=======
+                    const startTime = parseInt(wordElement.dataset.start) / 100; // Convert centiseconds to seconds
+                    window.audioPlayer.setCurrentTime(startTime);
+                    window.audioPlayer.play();
+>>>>>>> parent of aee0385 (Changes?)
                 });
 
                 segmentElement.appendChild(wordElement);
@@ -119,46 +113,42 @@ class TranscriptManager {
         });
     }
 
-    updateActiveWord(currentTime) {
-        // Convert current time to centiseconds
-        const currentTimeCentiseconds = Math.floor(currentTime * 100);
-        
-        // Find the current segment first
-        let activeSegmentIndex = this.transcriptData.findIndex(segment => 
-            currentTimeCentiseconds >= segment.start && currentTimeCentiseconds <= segment.stop
-        );
+    formatTime(seconds) {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
 
-        // If we're between segments, use the previous segment
-        if (activeSegmentIndex === -1) {
-            activeSegmentIndex = this.transcriptData.findIndex(segment => 
-                currentTimeCentiseconds < segment.start
-            ) - 1;
-        }
+    updateActiveWord(currentTime) {
+        // Convert current time to centiseconds (multiply by 100)
+        const currentTimeCentiseconds = Math.floor(currentTime * 100);
 
         // Remove active class from all words
-        this.wordElements.forEach(({element}) => {
+        this.wordElements.forEach(element => {
             element.classList.remove('active');
         });
 
         // Find and highlight the current word
-        let activeWordFound = false;
-        this.wordElements.forEach((wordData, key) => {
-            if (wordData.segmentIndex === activeSegmentIndex &&
-                currentTimeCentiseconds >= wordData.start && 
-                currentTimeCentiseconds <= wordData.stop) {
+        this.wordElements.forEach((element, key) => {
+            const start = parseInt(element.dataset.start);
+            const stop = parseInt(element.dataset.stop);
+            
+            if (currentTimeCentiseconds >= start && currentTimeCentiseconds <= stop) {
+                element.classList.add('active');
                 
-                wordData.element.classList.add('active');
-                activeWordFound = true;
-
-                // Handle scrolling if auto-scroll is enabled
+                // Only scroll if auto-scroll is enabled
                 if (this.autoScrollEnabled) {
-                    const segment = wordData.element.closest('.transcript-segment');
+                    const rect = element.getBoundingClientRect();
+                    const isVisible = (
+                        rect.top >= 0 &&
+                        rect.left >= 0 &&
+                        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+                    );
                     
-                    // Only scroll if we're moving to a new segment
-                    if (this.lastActiveSegment !== segment) {
-                        this.lastActiveSegment = segment;
-                        
-                        segment.scrollIntoView({
+                    if (!isVisible) {
+                        element.scrollIntoView({
                             behavior: 'smooth',
                             block: 'center'
                         });
@@ -166,26 +156,6 @@ class TranscriptManager {
                 }
             }
         });
-
-        // If no word is active in the current time, highlight the last word of the previous segment
-        if (!activeWordFound && activeSegmentIndex >= 0) {
-            const lastWordKey = `${activeSegmentIndex}-${this.getSegmentWordCount(activeSegmentIndex) - 1}`;
-            const lastWord = this.wordElements.get(lastWordKey);
-            if (lastWord) {
-                lastWord.element.classList.add('active');
-            }
-        }
-    }
-
-    getSegmentWordCount(segmentIndex) {
-        return this.transcriptData[segmentIndex].text.trim().split(/\s+/).length;
-    }
-
-    formatTime(seconds) {
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const remainingSeconds = Math.floor(seconds % 60);
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
     cleanup() {
@@ -197,8 +167,11 @@ class TranscriptManager {
         }
         this.wordElements.clear();
         this.transcriptData = null;
+<<<<<<< HEAD
         this.lastActiveSegment = null;
         this.currentContainer = null;
+=======
+>>>>>>> parent of aee0385 (Changes?)
     }
 }
 
