@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio/Video Transcript Synchronizer</title>
+    <title>Audio Transcript Synchronizer</title>
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
     <!-- File Selection Screen -->
     <div id="fileSelectionScreen" class="screen active">
-        <h1>Audio/Video Transcript Synchronizer</h1>
+        <h1>Audio Transcript Synchronizer</h1>
         <div class="file-selection-container">
             <div class="file-input-group">
-                <label for="audioFile">Select Media File (MP3/MP4):</label>
-                <input type="file" id="audioFile" accept=".mp3,.mp4" name="audioFile" required>
+                <label for="audioFile">Select Audio File (MP3):</label>
+                <input type="file" id="audioFile" accept=".mp3">
             </div>
             <div class="file-input-group">
                 <label for="transcriptFile">Select Transcript File (JSON):</label>
-                <input type="file" id="transcriptFile" accept=".json" name="transcriptFile" required>
+                <input type="file" id="transcriptFile" accept=".json">
             </div>
             <button id="loadFiles" disabled>Load Files</button>
         </div>
@@ -61,49 +61,9 @@
         </div>
     </div>
 
-    <!-- Video Player Screen -->
-    <div id="videoPlayerScreen" class="screen">
-        <div class="video-container">
-            <div class="video-section">
-                <video id="videoPlayer" controls></video>
-                <div class="video-controls">
-                    <div class="control-buttons">
-                        <button id="videoSkipBackward">⏪</button>
-                        <button id="videoPlayPause">▶</button>
-                        <button id="videoSkipForward">⏩</button>
-                        <select id="videoPlaybackSpeed" class="speed-control">
-                            <option value="0.25">0.25x</option>
-                            <option value="0.5">0.5x</option>
-                            <option value="0.75">0.75x</option>
-                            <option value="1" selected>1x</option>
-                            <option value="1.25">1.25x</option>
-                            <option value="1.5">1.5x</option>
-                            <option value="1.75">1.75x</option>
-                            <option value="2">2x</option>
-                            <option value="3">3x</option>
-                        </select>
-                        <button id="videoToggleAutoScroll" class="active">Auto-scroll: On</button>
-                    </div>
-                    <div class="progress-container">
-                        <span id="videoCurrentTime">00:00:00</span>
-                        <input type="range" id="videoProgressBar" min="0" max="100" value="0">
-                        <span id="videoDuration">00:00:00</span>
-                    </div>
-                </div>
-            </div>
-            <div class="transcript-section">
-                <div id="videoTranscriptText"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Load the scripts in the correct order -->
-    <script type="module" src="scripts/audioPlayer.js"></script>
-    <script type="module" src="scripts/videoPlayer.js"></script>
-    <script type="module" src="scripts/transcript.js"></script>
-    <script type="module" src="scripts/sync.js"></script>
-    <script type="module" src="scripts/fileSelector.js"></script>
-    <script type="module" src="scripts/main.js"></script>
-    <script type="module" src="scripts/checkModules.js"></script>
+    <script src="scripts/fileSelector.js"></script>
+    <script src="scripts/audioPlayer.js"></script>
+    <script src="scripts/transcript.js"></script>
+    <script src="scripts/sync.js"></script>
 </body>
 </html> 
