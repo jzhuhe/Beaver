@@ -1,26 +1,20 @@
-# Audio/Video Transcript Synchronizer
+# Audio Transcript Synchronizer
 
-A web-based tool for synchronizing audio/video playback with transcript text, similar to Otter.ai. This application allows users to load either an MP3 or MP4 file and its corresponding JSON transcript file to create an interactive audio/video-text experience.
+A web-based tool for synchronizing audio playback with transcript text, similar to Otter.ai. This application allows users to load an MP3 file and its corresponding JSON transcript file to create an interactive audio-text experience.
 
 ## Features
 
 - **File Selection Interface**
-  - Select MP3 audio file or MP4 video file
+  - Select MP3 audio file
   - Select corresponding JSON transcript file
   - Simple and intuitive file selection process
 
 - **Interactive Transcript Player**
-  - Audio/video player controls (play, pause, skip forward/backward)
-  - Progress slider for scrubbing through audio/video
-  - Word-level highlighting synchronized with playback
+  - Audio player controls (play, pause, skip forward/backward)
+  - Progress slider for scrubbing through audio
+  - Word-level highlighting synchronized with audio playback
   - Click-to-seek functionality on transcript text
   - Visual feedback for current playback position
-
-- **Video Player Features** (for MP4 files)
-  - Full-width video display
-  - Synchronized transcript display on the right
-  - Controls positioned below the video
-  - Same playback controls as audio mode
 
 ## Technical Structure
 
@@ -31,7 +25,6 @@ The application is built using the following technologies:
   - CSS3 for styling
   - JavaScript for interactivity
   - Web Audio API for audio manipulation
-  - HTML5 Video API for video playback
 
 - **File Structure**
   ```
@@ -42,9 +35,8 @@ The application is built using the following technologies:
   ├── scripts/
   │   ├── fileSelector.js # File selection handling
   │   ├── audioPlayer.js  # Audio playback controls
-  │   ├── videoPlayer.js  # Video playback controls
   │   ├── transcript.js   # Transcript parsing and display
-  │   └── sync.js        # Audio/video-text synchronization
+  │   └── sync.js        # Audio-text synchronization
   └── assets/            # Icons and other static assets
   ```
 
@@ -63,11 +55,11 @@ The application expects JSON transcript files in the following format:
 ## Usage
 
 1. Open the application in a web browser
-2. Select your MP3 or MP4 file
+2. Select your MP3 audio file
 3. Select the corresponding JSON transcript file
-4. Use the audio/video controls to play/pause and navigate through the transcript
-5. Click on any word in the transcript to jump to that position in the audio/video
-6. Use the slider to scrub through the audio/video file
+4. Use the audio controls to play/pause and navigate through the transcript
+5. Click on any word in the transcript to jump to that position in the audio
+6. Use the slider to scrub through the audio file
 
 ## Browser Compatibility
 
@@ -88,7 +80,11 @@ To run the application locally:
 
 - Support for different transcript formats
 - Export functionality for edited transcripts
-- Multiple audio/video file support
+- Multiple audio file support
 - Dark mode
 - Keyboard shortcuts
 - Mobile device support 
+## Legacy Video Version
+
+The repository previously included experimental video support. You can restore that version by checking out commit e4409a7.
+
